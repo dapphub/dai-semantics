@@ -176,9 +176,9 @@ where
 okay = (safe ∨ nice) ∧ (cool ∨ calm) ∧ t ≤ t₀+Θ
 safe = cᵤ·Ψ ≥ dᵤ·χ, nice = cᵤ·dᵤ₀ ≥ cᵤ₀·dᵤ, cool = Σd·χ ≤ Ω, calm = Δd ≤ 0
 ```
-The semantics of catering a CDP is split up into different cases. We begin with
-the case of a successful deposit/withdrawal of collateral, and simoultaneous 
-withdrawal/payback of a loan where `safe` and `cool` are both true, and the call 
+The semantics of catering a CDP is split up into a successful case and a failure case.
+We begin with the case of a successful deposit/withdrawal of collateral, and simoultaneous 
+withdrawal/payback of a loan where (`safe` or `nice`) and (`cool` or `calm`) are both true, and the call 
 happens within the allowed lag limit.
 
 TODO: incorporate overflow safety
@@ -202,8 +202,10 @@ rule <k> frob(ColDelta, DebtDelta) => true ...</k>
 	 <debtCeiling> Omega </debtCeiling>
 	 <lagLimit> Theta </lagLimit>
 	 
-	 requires EthCol +Int ColDelta >=Int (Debt +DebtDelta) *Int Chi // safe
-	 andBool  (TotalDebt +Int DebtDelta) *Int Chi <=Int Omega       // cool
+	 requires (EthCol +Int ColDelta >=Int (Debt +DebtDelta) *Int Chi                     // safe
+	   orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
+	 andBool  ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
+	   orBool DebtDelta <=Int 0)                                                         // calm  
 	 andBool  T <=Int T0 + Theta
 
      andBool  EthBal >=Int 0
@@ -216,6 +218,39 @@ rule <k> frob(ColDelta, DebtDelta) => true ...</k>
 	 andBool  Debt +Int DebtDelta >=Int 0
 	
 ```
+If any of these conditions are unmet, the method fails.
+```{.k}
+rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
+	 <caller> Caller </caller>
+	 
+     <account>
+	 <id> Caller </id>
+	 <eth> EthBal => EthBal -Int ColDelta </eth>
+	 <dai> DaiBal => DaiBal +Int DebtDelta *Int Chi </dai>
+     <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
+     <debt> Debt => Debt +Int DebtDelta </debt>
+	 </account>
+	 
+	 <accumulator> Chi </accumulator>
+	 <time> T </time>
+     <lastTouched> T0 </lastTouched>
+     <totalDebt> TotalDebt => TotalDebt +Int DebtDelta </totalDebt>
+	 <debtCeiling> Omega </debtCeiling>
+	 <lagLimit> Theta </lagLimit>
+	 
+	 requires notBool
+	 ((EthCol +Int ColDelta >=Int (Debt +DebtDelta) *Int Chi                     // safe
+	   orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
+	 andBool  ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
+	   orBool DebtDelta <=Int 0)                                                         // calm  
+	 andBool  T <=Int T0 + Theta
 
-
-
+     andBool  EthBal >=Int 0
+	 andBool  EthBal -Int ColDelta >=Int 0
+	 andBool  DaiBal >=Int 0
+	 andBool  DaiBal +Int DebtDelta *Int Chi >=Int 0
+	 andBool  EthCol >=Int 0
+	 andBool  EthCol +Int ColDelta >=Int 0
+	 andBool  Debt >=Int 0
+	 andBool  Debt +Int DebtDelta >=Int 0)
+``` 
