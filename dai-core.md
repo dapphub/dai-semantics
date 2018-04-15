@@ -64,7 +64,7 @@ them up more categories as well, to improve readability.
 
 ```{.k}
   syntax BExp ::= Bool
-                | "cater" "(" AExp "," Aexp ")"          [strict]   //  or "frob" in Brockman jargon. Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
+                | "frob" "(" AExp "," AExp ")"          [strict]   //  Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
                 | "throw"
 				
   syntax AExp ::= Value | Address
@@ -105,7 +105,7 @@ We first show the entire DAI configuration and then we discuss it:
 				  <liquidationFactor> 0 </liquidationFactor>
 				  <lagLimit> 0 </lagLimit>
 				  <debtCeiling> 0 </debtCeiling>
-				  <accumulator> </accumulator>
+				  <accumulator> 1 </accumulator>
 
                 </DAI>
 ```
@@ -202,11 +202,11 @@ rule <k> frob(ColDelta, DebtDelta) => true ...</k>
 	 <debtCeiling> Omega </debtCeiling>
 	 <lagLimit> Theta </lagLimit>
 	 
-	 requires (EthCol +Int ColDelta >=Int (Debt +DebtDelta) *Int Chi                     // safe
+	 requires (EthCol +Int ColDelta >=Int (Debt +Int DebtDelta) *Int Chi                     // safe
 	   orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
 	 andBool  ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
 	   orBool DebtDelta <=Int 0)                                                         // calm  
-	 andBool  T <=Int T0 + Theta
+	 andBool  T <=Int T0 +Int Theta
 
      andBool  EthBal >=Int 0
 	 andBool  EthBal -Int ColDelta >=Int 0
@@ -239,11 +239,11 @@ rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
 	 <lagLimit> Theta </lagLimit>
 	 
 	 requires notBool
-	 ((EthCol +Int ColDelta >=Int (Debt +DebtDelta) *Int Chi                     // safe
+	 ((EthCol +Int ColDelta >=Int (Debt +Int DebtDelta) *Int Chi                     // safe
 	   orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
 	 andBool  ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
 	   orBool DebtDelta <=Int 0)                                                         // calm  
-	 andBool  T <=Int T0 + Theta
+	 andBool  T <=Int T0 +Int Theta
 
      andBool  EthBal >=Int 0
 	 andBool  EthBal -Int ColDelta >=Int 0
@@ -254,3 +254,6 @@ rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
 	 andBool  Debt >=Int 0
 	 andBool  Debt +Int DebtDelta >=Int 0)
 ``` 
+```{.k}
+endmodule
+```
