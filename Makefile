@@ -10,4 +10,4 @@ defn: $(defn_files)
 	pandoc --from markdown --to tangle.lua --metadata=code:k $< > $@
 
 build: defn
-	kompile .build/dai-core.k --debug --main-module DAI --syntax-module DAI
+	kompile .build/dai.k --debug --main-module DAI --syntax-module DAI

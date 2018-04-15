@@ -15,7 +15,7 @@ functions change the configuration.
 We start by defining a module called `DAI`:
 
 ```{.k}
-module DAI
+module DAI-CORE
 ```
 
 ## Configuration
@@ -87,26 +87,24 @@ We first show the entire DAI configuration and then we discuss it:
   configuration <DAI>
                   <k> $PGM:K </k>
                   <caller> 0 </caller>
-
                   <accounts>
                     <account multiplicity="*">
                       <id> 0 </id>
                       <eth> 0 </eth>
-					  <dai> 0 </dai>
-					  <eth-collateral> 0 </eth-collateral>
-					  <debt> 0 </debt>
+					            <dai> 0 </dai>
+					            <eth-collateral> 0 </eth-collateral>
+					            <debt> 0 </debt>
                     </account>
                   </accounts>
 				  
-				  <totalDebt> 0 </totalDebt>
-                  <eth-usd-price> 0 </eth-usd-price>
-				  <time> 0 </time>
-				  <lastTouched> 0 </lastTouched>
-				  <liquidationFactor> 0 </liquidationFactor>
-				  <lagLimit> 0 </lagLimit>
-				  <debtCeiling> 0 </debtCeiling>
-				  <accumulator> 1 </accumulator>
-
+				          <totalDebt> 0 </totalDebt>
+                  <eth-usd-price> 0 </eth-usd-price> //should not be here
+				          <time> 0 </time>
+				          <lastTouched> 0 </lastTouched>
+				          <liquidationFactor> 0 </liquidationFactor>
+				          <lagLimit> 0 </lagLimit>
+				          <debtCeiling> 0 </debtCeiling>
+				          <accumulator> 1 </accumulator>
                 </DAI>
 ```
 The configuration consists or a top-level cell `<DAI/>`, which

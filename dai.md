@@ -15,7 +15,10 @@ functions change the configuration.
 We start by defining a module called `ERC20`:
 
 ```{.k}
-module ERC20
+requires "dai-core.k"
+
+module DAI
+  imports DAI-CORE
 ```
 
 ## Configuration
@@ -81,7 +84,7 @@ them up more categories as well, to improve readability.
                 | "help"       [strict]   //  print help about sai(1) or one of its subcommands
                 | "join"       [strict]   //  buy SKR for gems
                 | "lock"       [strict]   //  post additional SKR collateral to a cup
-           | "prod"       [strict]   //  recalculate the accrued holder fee (par)
+                | "prod"       [strict]   //  recalculate the accrued holder fee (par)
                 | "safe"       [strict]   //  determine if a cup is safe
                 | "setAxe"     [strict]   //  update the liquidation penalty
                 | "setFee"     [strict]   //  update the governance fee
@@ -93,7 +96,7 @@ them up more categories as well, to improve readability.
                 | "setWay"     [strict]   //  update the holder fee (interest rate)
                 | "shut"       [strict]   //  close a cup
                 | "vent"       [strict]   //  process a caged tub
-                | "wipe        [strict]   //  repay some portion of your existing sai debt
+                | "wipe"        [strict]   //  repay some portion of your existing sai debt
                 | "throw"
 				
   syntax AExp ::= Value | Address
@@ -106,7 +109,7 @@ them up more categories as well, to improve readability.
                 | "fit"           //  get the gem per skr settlement price
                 | "fix"           //  get the gem per sai settlement price
                 | "fog"           //  get the amount of skr pending liquidation
-				| "gem"           //  get the collateral token
+				        | "gem"           //  get the collateral token
                 | "gov"           //  get the governance token
                 | "cap"           //  get the debt ceiling
                 | "ice"           //  get the good debt
@@ -165,56 +168,53 @@ We first show the entire ERC20 configuration and then we discuss it:
 
 ```{.k}
   configuration <DAI>
-                  <k> $PGM:K </k>
-                  <caller> 0 </caller>
-					  
-				  <vox> 
-					  <wut> 0 </wut>
-					  <par> 0 </par>
-					  <way> 0 </way>
-					  <how> 0 </how>
-					  <tau> 0 </tau>
-				  </vox>
+  				        <vox> 
+	         				  <wut> 0 </wut>
+	         				  <par> 0 </par>
+	         				  <way> 0 </way>
+	         				  <how> 0 </how>
+	         				  <tau> 0 </tau>
+	         			  </vox>
 				  
-				  <era> /*TODO*/ </era>
-				  <mode> /*TODO*/ </mode>
+				          //<era> /*TODO*/ </era>
+				          //<mode> /*TODO*/ </mode>
 
-                  <accounts>
-                    <account multiplicity="*">
-                      <id> 0 </id>
-                      <balances multiplicity="*"> 
-					    <id> 0 </id>                // Token identifier
-						<balance> 0 </balance>
-					  </balances>
-                    </account>
-                  </accounts>
-                  		  
-				  <urns>
-				    <urn multiplicity="*">
-					  <id> 0 </id>
-					  <ilk-id> 0 </ilk-id>
-					  <lad> 0 </lad>
-					  <art> 0 </art>
-					  <ink> 0 </ink>
-					  <cat multiplicity="*">     //Better would be if there was a multiplicity feature stating that there can be at most one such cell
-					    <id> 0 </id>
-					  </cat>
-				    </urn>
-				  </urns>
+                  //<accounts>
+                  //  <account multiplicity="*">
+                  //    <id> 0 </id>
+                  //    <balances multiplicity="*"> 
+					        //     <id> 0 </id>                // Token identifier
+					       	//    <balance> 0 </balance>
+					        //   </balances>
+                  //  </account>
+                  //</accounts>
+                          		  
+				          <urns>
+				            <urn multiplicity="*">
+					            <id> 0 </id>
+					            <ilk-id> 0 </ilk-id>
+					            <lad> 0 </lad>
+					            <art> 0 </art>
+					            <ink> 0 </ink>
+					            <cat multiplicity="*">     //Better would be if there was a multiplicity feature stating that there can be at most one such cell
+					              <id> 0 </id>
+					            </cat>
+				            </urn>
+				          </urns>
 				  
-				  <ilks>
-				    <ilk multiplicity="*">
-					  //TODO
-					</ilk>
-				  </ilks>
+				          //<ilks>
+				          //  <ilk multiplicity="*">
+					        //  //TODO
+					        //  </ilk>
+				          //</ilks>
 
-	              <tags>
-				    <tag multiplicity="*">
-					//TODO
-					</tag>
-				  </tags
-				  
-                  <log> Events: </log>
+	                //<tags>
+				          //  <tag multiplicity="*">
+					        //  //TODO
+					        //  </tag>
+				          //</tags>
+				          
+                  //<log> Events: </log>
                 </DAI>
 ```
 The configuration consists or a top-level cell `<DAI/>`, which
@@ -286,13 +286,13 @@ of them as the mathematical rather than the machine integer operations.
 
 We start with the semantics of `open`:
 ```{.k}
-  rule <k> open(IdUrn, IdIlk) => True ...</k>
-       <ilk> <id> IdIlk </id> /*TODO*/ </ilk>
-	   <urns> ... => <urn> <id> IdIlk </id> /*TODO*/ 
-                     </urn> 
-					 </urns>
-					 
-	   
+  rule <k> open(IdUrn, IdIlk) => true ... </k>
+       //<ilk>
+       //  <id> IdIlk </id> /*TODO*/
+       //</ilk>
+	     //<urns>
+       //  ... => <urn> <id> IdIlk </id> /*TODO*/ </urn> 
+			 //</urns>   
 ```
 The rule above involves two cells, `<ilk/>` and `<supply/>`, and matches
 `totalSupply()` as the first task in the `</k>` cell and the contents
@@ -301,5 +301,7 @@ In K, variables are usually capitalized; `...` is a special variable,
 called a *structural frame*, which matches the rest of a sequence, set,
 map, cell, etc.  The arrow `=>` indicates that its left-hand-side term
 is rewritten to its right-hand-side term.
-
+```{.k}
+endmodule
+```
 TODO: 
