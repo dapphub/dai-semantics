@@ -42,13 +42,14 @@ assumptions about the blockchain specific implementation
 details at this stage, we encode both of these via the K predefined
 syntactic category `Int`:
 
-```{.k}
-  syntax Value   ::= Int  // can be easily changed
-  syntax Address ::= Int  // can be easily changed
-  syntax Id      ::= Int  // can be easily changed
-  // WHICH OTHER VALUES ARE THERE? TIME?
-  
-```
+//Already defined in DAI-CORE
+//```{.k}
+//  syntax Value   ::= Int  // can be easily changed
+//  syntax Address ::= Int  // can be easily changed
+//  syntax Id      ::= Int  // can be easily changed
+//  // WHICH OTHER VALUES ARE THERE? TIME?
+//  
+//```
 
 ### 1.2 Main Functions
 
@@ -66,8 +67,8 @@ TODO: Provide arguments for the functions. This probably necessitates splitting
 them up more categories as well, to improve readability.
 
 ```{.k}
-  syntax BExp ::= Bool
-                | "open" "(" Id "," Id ")"      [strict]   //  create a new cup (collateralized debt position)
+  syntax DAICommand ::=
+                  "open" "(" Id "," Id ")"      [strict]   //  create a new cup (collateralized debt position)
                 | "bite"       [strict]   //  initiate liquidation of an undercollateral cup
                 | "boom"       [strict]   //  buy some amount of sai to process joy (surplus)
                 | "bust"       [strict]   //  sell some amount of sai to process woe (bad debt)
@@ -96,11 +97,9 @@ them up more categories as well, to improve readability.
                 | "setWay"     [strict]   //  update the holder fee (interest rate)
                 | "shut"       [strict]   //  close a cup
                 | "vent"       [strict]   //  process a caged tub
-                | "wipe"        [strict]   //  repay some portion of your existing sai debt
-                | "throw"
+                | "wipe"       [strict]   //  repay some portion of your existing sai debt
 				
-  syntax AExp ::= Value | Address
-                | "air"           //  get the amount of backing collateral
+  syntax AExp ::= "air"           //  get the amount of backing collateral
                 | "axe"           //  get the liquidation penalty
                 | "caged"         //  get time of cage event (= 0 if system is not caged)
                 | "chi"           //  get the internal debt price
@@ -168,6 +167,7 @@ We first show the entire ERC20 configuration and then we discuss it:
 
 ```{.k}
   configuration <DAI>
+                  initCoreCell
   				        <vox> 
 	         				  <wut> 0 </wut>
 	         				  <par> 0 </par>
@@ -191,13 +191,13 @@ We first show the entire ERC20 configuration and then we discuss it:
                           		  
 				          <urns>
 				            <urn multiplicity="*">
-					            <id> 0 </id>
+					            <urn-id> 0 </urn-id>
 					            <ilk-id> 0 </ilk-id>
 					            <lad> 0 </lad>
 					            <art> 0 </art>
 					            <ink> 0 </ink>
 					            <cat multiplicity="*">     //Better would be if there was a multiplicity feature stating that there can be at most one such cell
-					              <id> 0 </id>
+					              <cat-id> 0 </cat-id>
 					            </cat>
 				            </urn>
 				          </urns>
@@ -286,7 +286,7 @@ of them as the mathematical rather than the machine integer operations.
 
 We start with the semantics of `open`:
 ```{.k}
-  rule <k> open(IdUrn, IdIlk) => true ... </k>
+  //rule <k> open(IdUrn, IdIlk) => true ... </k>
        //<ilk>
        //  <id> IdIlk </id> /*TODO*/
        //</ilk>
