@@ -98,7 +98,7 @@ them up more categories as well, to improve readability.
                 | "shut"       [strict]   //  close a cup
                 | "vent"       [strict]   //  process a caged tub
                 | "wipe"       [strict]   //  repay some portion of your existing sai debt
-				
+        
   syntax AExp ::= "air"           //  get the amount of backing collateral
                 | "axe"           //  get the liquidation penalty
                 | "caged"         //  get time of cage event (= 0 if system is not caged)
@@ -108,7 +108,7 @@ them up more categories as well, to improve readability.
                 | "fit"           //  get the gem per skr settlement price
                 | "fix"           //  get the gem per sai settlement price
                 | "fog"           //  get the amount of skr pending liquidation
-				        | "gem"           //  get the collateral token
+                | "gem"           //  get the collateral token
                 | "gov"           //  get the governance token
                 | "cap"           //  get the debt ceiling
                 | "ice"           //  get the good debt
@@ -168,52 +168,52 @@ We first show the entire ERC20 configuration and then we discuss it:
 ```{.k}
   configuration <DAI>
                   initCoreCell
-  				        <vox> 
-	         				  <wut> 0 </wut>
-	         				  <par> 0 </par>
-	         				  <way> 0 </way>
-	         				  <how> 0 </how>
-	         				  <tau> 0 </tau>
-	         			  </vox>
-				  
-				          //<era> /*TODO*/ </era>
-				          //<mode> /*TODO*/ </mode>
+                  <vox> 
+                    <wut> 0 </wut>
+                    <par> 0 </par>
+                    <way> 0 </way>
+                    <how> 0 </how>
+                    <tau> 0 </tau>
+                  </vox>
+          
+                  //<era> /*TODO*/ </era>
+                  //<mode> /*TODO*/ </mode>
 
                   //<accounts>
                   //  <account multiplicity="*">
                   //    <id> 0 </id>
                   //    <balances multiplicity="*"> 
-					        //     <id> 0 </id>                // Token identifier
-					       	//    <balance> 0 </balance>
-					        //   </balances>
+                  //     <id> 0 </id>                // Token identifier
+                  //    <balance> 0 </balance>
+                  //   </balances>
                   //  </account>
                   //</accounts>
-                          		  
-				          <urns>
-				            <urn multiplicity="*">
-					            <urn-id> 0 </urn-id>
-					            <ilk-id> 0 </ilk-id>
-					            <lad> 0 </lad>
-					            <art> 0 </art>
-					            <ink> 0 </ink>
-					            <cat multiplicity="*">     //Better would be if there was a multiplicity feature stating that there can be at most one such cell
-					              <cat-id> 0 </cat-id>
-					            </cat>
-				            </urn>
-				          </urns>
-				  
-				          //<ilks>
-				          //  <ilk multiplicity="*">
-					        //  //TODO
-					        //  </ilk>
-				          //</ilks>
+                                
+                  <urns>
+                    <urn multiplicity="*">
+                      <urn-id> 0 </urn-id>
+                      <ilk-id> 0 </ilk-id>
+                      <lad> 0 </lad>
+                      <art> 0 </art>
+                      <ink> 0 </ink>
+                      <cat multiplicity="*">     //Better would be if there was a multiplicity feature stating that there can be at most one such cell
+                        <cat-id> 0 </cat-id>
+                      </cat>
+                    </urn>
+                  </urns>
+          
+                  //<ilks>
+                  //  <ilk multiplicity="*">
+                  //  //TODO
+                  //  </ilk>
+                  //</ilks>
 
-	                //<tags>
-				          //  <tag multiplicity="*">
-					        //  //TODO
-					        //  </tag>
-				          //</tags>
-				          
+                  //<tags>
+                  //  <tag multiplicity="*">
+                  //  //TODO
+                  //  </tag>
+                  //</tags>
+                  
                   //<log> Events: </log>
                 </DAI>
 ```
@@ -290,9 +290,9 @@ We start with the semantics of `open`:
        //<ilk>
        //  <id> IdIlk </id> /*TODO*/
        //</ilk>
-	     //<urns>
+       //<urns>
        //  ... => <urn> <id> IdIlk </id> /*TODO*/ </urn> 
-			 //</urns>   
+       //</urns>   
 ```
 The rule above involves two cells, `<ilk/>` and `<supply/>`, and matches
 `totalSupply()` as the first task in the `</k>` cell and the contents
