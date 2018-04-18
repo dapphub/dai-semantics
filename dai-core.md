@@ -91,7 +91,7 @@ We first show the entire DAI configuration and then we discuss it:
 
 ```{.k}
   configuration <core>
-                  <k> throw </k>
+                  <k> $PGM:DAISimulation </k>
                   <caller> 0 </caller>
                   <accounts>
                     <account multiplicity="*">
@@ -102,9 +102,11 @@ We first show the entire DAI configuration and then we discuss it:
                       <debt> 0 </debt>
                     </account>
                   </accounts>
-          
+
+                  <root> 0 </root>
+
+                  <interestRate> 2 </interestRate>
                   <totalDebt> 0 </totalDebt>
-                  <eth-usd-price> 0 </eth-usd-price> //should not be here
                   <time> 0 </time>
                   <lastTouched> 0 </lastTouched>
                   <liquidationFactor> 0 </liquidationFactor>
@@ -224,6 +226,7 @@ rule <k> frob(ColDelta, DebtDelta) => true ... </k>
    andBool Debt +Int DebtDelta >=Int 0
   
 ```
+
 If any of these conditions are unmet, the method fails.
 ```{.k}
 rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
