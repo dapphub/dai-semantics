@@ -71,6 +71,7 @@ them up more categories as well, to improve readability.
 
   syntax DAICommand ::= Bool
                       | "frob" "(" AExp "," AExp ")"          [strict]   //  Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
+                      | "drip" "(" Int ")"                    [function] // We model the current time as an argument to drip. That this is larger than the previous time will be enforced in its rewrite rule.
                       | "throw"
         
   syntax AExp ::= Value | Address
@@ -190,81 +191,96 @@ happens within the allowed lag limit.
 TODO: incorporate overflow safety
 
 ```{.k}
-rule <k> frob(ColDelta, DebtDelta) => true ... </k>
-     <caller> Caller </caller>
-   
-     <account>
-       <id> Caller </id>
-       <eth> EthBal => EthBal -Int ColDelta </eth>
-       <dai> DaiBal => DaiBal +Int DebtDelta *Int Chi </dai>
-       <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
-       <debt> Debt => Debt +Int DebtDelta </debt>
-     </account>
-   
-     <accumulator> Chi </accumulator>
-     <time> T </time>
-     <lastTouched> T0 </lastTouched>
-     <totalDebt> TotalDebt => TotalDebt +Int DebtDelta </totalDebt>
-     <debtCeiling> Omega </debtCeiling>
-     <lagLimit> Theta </lagLimit>
-   
-  requires (EthCol +Int ColDelta >=Int (Debt +Int DebtDelta) *Int Chi                     // safe
-    orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
-   
-   andBool ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
-    orBool DebtDelta <=Int 0)                                                         // calm  
-   
-   andBool T <=Int T0 +Int Theta
-
-   andBool EthBal >=Int 0
-   andBool EthBal -Int ColDelta >=Int 0
-   andBool DaiBal >=Int 0
-   andBool DaiBal +Int DebtDelta *Int Chi >=Int 0
-   andBool EthCol >=Int 0
-   andBool EthCol +Int ColDelta >=Int 0
-   andBool Debt >=Int 0
-   andBool Debt +Int DebtDelta >=Int 0
+  rule <k> frob(ColDelta, DebtDelta) => . ... </k>
+       <caller> Caller </caller>
+     
+       <account>
+         <id> Caller </id>
+         <eth> EthBal => EthBal -Int ColDelta </eth>
+         <dai> DaiBal => DaiBal +Int DebtDelta *Int Chi </dai>
+         <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
+         <debt> Debt => Debt +Int DebtDelta </debt>
+       </account>
+     
+       <accumulator> Chi </accumulator>
+       <time> T </time>
+       <lastTouched> T0 </lastTouched>
+       <totalDebt> TotalDebt => TotalDebt +Int DebtDelta </totalDebt>
+       <debtCeiling> Omega </debtCeiling>
+       <lagLimit> Theta </lagLimit>
+     
+    requires (EthCol +Int ColDelta >=Int (Debt +Int DebtDelta) *Int Chi                     // safe
+      orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
+     
+     andBool ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
+      orBool DebtDelta <=Int 0)                                                         // calm  
+     
+     andBool T <=Int T0 +Int Theta
   
+     andBool EthBal >=Int 0
+     andBool EthBal -Int ColDelta >=Int 0
+     andBool DaiBal >=Int 0
+     andBool DaiBal +Int DebtDelta *Int Chi >=Int 0
+     andBool EthCol >=Int 0
+     andBool EthCol +Int ColDelta >=Int 0
+     andBool Debt >=Int 0
+     andBool Debt +Int DebtDelta >=Int 0
 ```
 
 If any of these conditions are unmet, the method fails.
 ```{.k}
-rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
-     <caller> Caller </caller>
+  rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
+       <caller> Caller </caller>
+       
+       <account>
+         <id> Caller </id>
+         <eth> EthBal => EthBal -Int ColDelta </eth>
+         <dai> DaiBal => DaiBal +Int DebtDelta *Int Chi </dai>
+         <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
+         <debt> Debt => Debt +Int DebtDelta </debt>
+       </account>
      
-     <account>
-       <id> Caller </id>
-       <eth> EthBal => EthBal -Int ColDelta </eth>
-       <dai> DaiBal => DaiBal +Int DebtDelta *Int Chi </dai>
-       <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
-       <debt> Debt => Debt +Int DebtDelta </debt>
-     </account>
-   
-     <accumulator> Chi </accumulator>
-     <time> T </time>
-     <lastTouched> T0 </lastTouched>
-     <totalDebt> TotalDebt => TotalDebt +Int DebtDelta </totalDebt>
-     <debtCeiling> Omega </debtCeiling>
-     <lagLimit> Theta </lagLimit>
-   
-  requires notBool
-           ((EthCol +Int ColDelta >=Int (Debt +Int DebtDelta) *Int Chi                     // safe
-    orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
-   
-   andBool ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
-    orBool DebtDelta <=Int 0)                                                         // calm  
-   
-   andBool T <=Int T0 +Int Theta
+       <accumulator> Chi </accumulator>
+       <time> T </time>
+       <lastTouched> T0 </lastTouched>
+       <totalDebt> TotalDebt => TotalDebt +Int DebtDelta </totalDebt>
+       <debtCeiling> Omega </debtCeiling>
+       <lagLimit> Theta </lagLimit>
+     
+    requires notBool
+             ((EthCol +Int ColDelta >=Int (Debt +Int DebtDelta) *Int Chi                     // safe
+      orBool (EthCol +Int ColDelta) *Int Debt >=Int EthCol *Int (Debt +Int DebtDelta))  // nice
+     
+     andBool ((TotalDebt +Int DebtDelta) *Int Chi <=Int Omega                           // cool
+      orBool DebtDelta <=Int 0)                                                         // calm  
+     
+     andBool T <=Int T0 +Int Theta
+  
+     andBool EthBal >=Int 0
+     andBool EthBal -Int ColDelta >=Int 0
+     andBool DaiBal >=Int 0
+     andBool DaiBal +Int DebtDelta *Int Chi >=Int 0
+     andBool EthCol >=Int 0
+     andBool EthCol +Int ColDelta >=Int 0
+     andBool Debt >=Int 0
+     andBool Debt +Int DebtDelta >=Int 0)
+```
 
-   andBool EthBal >=Int 0
-   andBool EthBal -Int ColDelta >=Int 0
-   andBool DaiBal >=Int 0
-   andBool DaiBal +Int DebtDelta *Int Chi >=Int 0
-   andBool EthCol >=Int 0
-   andBool EthCol +Int ColDelta >=Int 0
-   andBool Debt >=Int 0
-   andBool Debt +Int DebtDelta >=Int 0)
-``` 
+
+We now specify how the interest accumulator is updated.
+```{.k}
+  rule <k> drip(T) => true ...</k>
+       <caller> Caller </caller>
+       <root> Caller </root>
+     
+       <accumulator> Chi => Chi +Int (Phi ^Int (T0 -Int T) -Int 1) *Int Chi </accumulator>
+       <time> PrevT => T </time>
+       <lastTouched> T0 => T </lastTouched>
+       <interestRate> Phi </interestRate>
+
+    requires T >=Int PrevT // We cannot travel backwards in time.
+```
+
 ```{.k}
 endmodule
 ```
