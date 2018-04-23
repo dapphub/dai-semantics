@@ -106,6 +106,15 @@ We first show the entire DAI configuration and then we discuss it:
                     </account>
                   </accounts>
 
+                  <loans>
+                    <loan multiplicity="*">
+                      <accountID> 0 </accountID>
+                      <debtDelta> 0 </debtDelta>
+                      <daiAmount> 0 </daiAmount>
+                      <lastDrip> 0 </lastDrip>
+                    </loan>
+                  </loans>
+
                   <root> 0 </root>
 
                   <interestRate> 2 </interestRate>
@@ -202,6 +211,17 @@ TODO: incorporate overflow safety
          <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
          <debt> Debt => Debt +Int DebtDelta </debt>
        </account>
+
+       <loans>
+         ( .Bag =>
+         <loan>
+           <accountID> Caller </accountID>
+           <debtDelta> DebtDelta </debtDelta>
+           <daiAmount> DebtDelta *Int Chi </daiAmount>
+           <lastDrip> T0 </lastDrip>
+         </loan> )
+         ...
+       </loans>
      
        <accumulator> Chi </accumulator>
        <time> T </time>
