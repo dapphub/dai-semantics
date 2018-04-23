@@ -74,8 +74,8 @@ them up more categories as well, to improve readability.
                              | DAICommand
 
 
-  syntax DAICommand ::= "frob" "(" AExp "," AExp ")"          [strict]   //  Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
-                      | "drip"
+  syntax DAICommand ::= "frob" "[" Address "]" "(" AExp "," AExp ")"          [strict]   //  Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
+                      | "drip" "[" Address "]"
         
   syntax AExp ::= Value | Address
   
@@ -96,7 +96,6 @@ We first show the entire DAI configuration and then we discuss it:
 ```{.k}
   configuration <core>
                   <k> $PGM:DAISimulation </k>
-                  <caller> 0 </caller>
                   <accounts>
                     <account multiplicity="*">
                       <id> 0 </id>
@@ -194,8 +193,7 @@ happens within the allowed lag limit.
 TODO: incorporate overflow safety
 
 ```{.k}
-  rule <k> frob(ColDelta, DebtDelta) => . ... </k>
-       <caller> Caller </caller>
+  rule <k> frob[Caller](ColDelta, DebtDelta) => . ... </k>
      
        <account>
          <id> Caller </id>
@@ -232,8 +230,7 @@ TODO: incorporate overflow safety
 
 If any of these conditions are unmet, the method fails.
 ```{.k}
-  rule <k> frob(ColDelta, DebtDelta) => throw ...</k>
-       <caller> Caller </caller>
+  rule <k> frob[Caller](ColDelta, DebtDelta) => throw ...</k>
        
        <account>
          <id> Caller </id>
@@ -272,8 +269,7 @@ If any of these conditions are unmet, the method fails.
 
 We now specify how the interest accumulator is updated.
 ```{.k}
-  rule <k> drip => . ...</k>
-       <caller> Caller </caller>
+  rule <k> drip[Caller] => . ...</k>
        <root> Caller </root>
      
        <accumulator> Chi => Chi +Int (Phi ^Int (T0 -Int T) -Int 1) *Int Chi </accumulator>
