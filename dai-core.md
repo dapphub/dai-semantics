@@ -64,15 +64,18 @@ them up more categories as well, to improve readability.
 
 ```{.k}
   syntax DAISimulation ::= ".DAISimulation"
-                         | DAICommand DAISimulation
+                         | SimulationCommand DAISimulation
 
   rule .DAISimulation => .
-  rule DAIC:DAICommand DAIS:DAISimulation => DAIC ~> DAIS
+  rule SIMC:SimulationCommand DAIS:DAISimulation => SIMC ~> DAIS
 
-  syntax DAICommand ::= Bool
-                      | "frob" "(" AExp "," AExp ")"          [strict]   //  Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
-                      | "drip" "(" Int ")"                    [function] // We model the current time as an argument to drip. That this is larger than the previous time will be enforced in its rewrite rule.
-                      | "throw"
+  syntax SimulationCommand ::= "step" "(" Int ")"
+                             | "throw"
+                             | DAICommand
+
+
+  syntax DAICommand ::= "frob" "(" AExp "," AExp ")"          [strict]   //  Cater your CDP by either withdrawing or locking up more collateral, pay back or withdraw more DAI
+                      | "drip"
         
   syntax AExp ::= Value | Address
   
@@ -269,16 +272,23 @@ If any of these conditions are unmet, the method fails.
 
 We now specify how the interest accumulator is updated.
 ```{.k}
-  rule <k> drip(T) => true ...</k>
+  rule <k> drip => . ...</k>
        <caller> Caller </caller>
        <root> Caller </root>
      
        <accumulator> Chi => Chi +Int (Phi ^Int (T0 -Int T) -Int 1) *Int Chi </accumulator>
-       <time> PrevT => T </time>
+       <time> T </time>
        <lastTouched> T0 => T </lastTouched>
        <interestRate> Phi </interestRate>
+```
 
-    requires T >=Int PrevT // We cannot travel backwards in time.
+
+The `step(N)` function is not part of the DAI commands but simulates the flow of `N>0` steps of time.
+```{.k}
+  rule <k> step(N) => . ...</k>
+       <time> T => T +Int N </time>
+
+    requires N >Int 0
 ```
 
 ```{.k}
