@@ -1,5 +1,5 @@
 defn_dir=.build
-defn_files=$(defn_dir)/dai-core.k $(defn_dir)/dai.k
+defn_files=$(defn_dir)/dai-core.k
 
 defn: $(defn_files)
 
@@ -10,4 +10,4 @@ defn: $(defn_files)
 	pandoc --from markdown --to tangle.lua --metadata=code:k $< > $@
 
 build: defn
-	kompile .build/dai.k --debug --main-module DAI --syntax-module DAI
+	kompile .build/dai-core.k --debug --main-module DAI-CORE --syntax-module DAI-CORE
