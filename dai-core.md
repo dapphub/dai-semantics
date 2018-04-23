@@ -230,20 +230,20 @@ TODO: incorporate overflow safety
 
 If any of these conditions are unmet, the method fails.
 ```{.k}
-  rule <k> frob[Caller](ColDelta, DebtDelta) => throw ...</k>
+  rule <k> frob[Caller](ColDelta, DebtDelta) => . ...</k>
        
        <account>
          <id> Caller </id>
-         <eth> EthBal => EthBal -Int ColDelta </eth>
-         <dai> DaiBal => DaiBal +Int DebtDelta *Int Chi </dai>
-         <eth-collateral> EthCol => EthCol +Int ColDelta </eth-collateral>
-         <debt> Debt => Debt +Int DebtDelta </debt>
+         <eth> EthBal </eth>
+         <dai> DaiBal </dai>
+         <eth-collateral> EthCol </eth-collateral>
+         <debt> Debt </debt>
        </account>
      
        <accumulator> Chi </accumulator>
        <time> T </time>
        <lastTouched> T0 </lastTouched>
-       <totalDebt> TotalDebt => TotalDebt +Int DebtDelta </totalDebt>
+       <totalDebt> TotalDebt </totalDebt>
        <debtCeiling> Omega </debtCeiling>
        <lagLimit> Theta </lagLimit>
      
