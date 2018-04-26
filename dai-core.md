@@ -292,7 +292,7 @@ We now specify how the interest accumulator is updated.
   rule <k> drip[Caller] => . ...</k>
        <root> Caller </root>
      
-       <accumulator> Chi => Chi +Int (Phi ^Int (T0 -Int T) -Int 1) *Int Chi </accumulator>
+       <accumulator> Chi => Chi +Int (Phi ^Int (T -Int T0) -Int 1) *Int Chi </accumulator>
        <time> T </time>
        <lastTouched> T0 => T </lastTouched>
        <interestRate> Phi </interestRate>
